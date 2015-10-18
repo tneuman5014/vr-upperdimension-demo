@@ -10,7 +10,7 @@
 	</head>
 	<body>
 		<script src="js/three.min.js"></script>
-		<script src="jvrwebgl-master/template/js/VREffect.js"></script>
+		<script src="http://threejs.org/examples/js/effects/VREffect.js"></script>
 		<script src="jvrwebgl-master/template/js/VRControls.js"></script>
 		<script src="js/makers.js"></script>
 		<script src="js/controls.js"></script>
@@ -27,10 +27,7 @@
 				document.body.classList.add('error');
 			}
 
-			var vrEffect = new THREE.VREffect(renderer, function(error) {
-				document.body.innerHTML = error;
-				document.body.classList.add('error');
-			});
+			var vrEffect = new THREE.VREffect( renderer, null);
 			vrEffect.setFullScreen(true);
 
 			document.body.appendChild(renderer.domElement);
