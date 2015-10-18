@@ -14,7 +14,8 @@
 		<script src="http://threejs.org/examples/js/controls/VRControls.js"></script>
 		<script src="js/makers.js"></script>
 		<script src="js/controls.js"></script>
-		
+		<script src="js/Collisions.js"></script>
+		<script src="js.CollisionsUtil.js"></script>
 		<script src="js/Shaders.js"></script>
 		<script src="js/Vector.js"></script>
 		<script src="js/Segment.js"></script>
@@ -48,6 +49,7 @@
 			var ground = generateBox(-1, 0, -1, 0.2);
 			scene.add(cube);
 			var plane = new THREE.Mesh(new THREE.PlaneGeometry(4, 4), new THREE.MeshBasicMaterial({color:0xffff00}));
+			plane.rotation.x = 0.8;
 			scene.add(plane);
 
 			scene.add(new THREE.AxisHelper(5));
@@ -56,14 +58,19 @@
 			vertSource = s.vertexShader();
 			fragSource = s.fragmentShader();
 
+
 			var cubey = new Ncube( 3, 3.0, new Vector( [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ] ), vertSource, fragSource );
 			scene.add(cubey.mesh);	
 
 		//	camera.position.z = 8;
 
+			camera.position.z = 30;
+
+
 			var move_vector = new THREE.Vector3(0, 0, 0);
 
 			document.onkeypress = function(event) {
+
 				handle(event.key, vrEffect);
 			}
 
@@ -82,7 +89,14 @@
 				case 'd':
 					move_vector.x = 0.2;
 					break;
+				case 'ArrowDown':
+					move_vector.y = -0.2;
+					break;
+				case 'ArrowUp':
+					move_vector.y = 0.2;
+					break;
 				}
+				
 				move_vector.setLength(0.2);
 			}
 
@@ -101,6 +115,12 @@
 				case 'd':
 					move_vector.x = 0;
 					break;
+				case 'ArrowDown':
+					move_vector.y = 0;
+					break;
+				case 'ArrowUp':
+					move_vector.y = 0;
+					break;
 				}
 				move_vector.setLength(0.2);
 			}
@@ -118,11 +138,18 @@
 				cubey.mesh.rotation.x += 0.008;
 				cubey.mesh.rotation.y += 0.008;
 				cubey.mesh.rotation.z += 0.008;
-				camera.position.z = 4.5;
+				
 				cubey.uniforms.time.value += 0.05;
 				vrEffect.render(scene, camera);
 			}
 			nextframe();
+
+
+
+
+
+
+
 
 		</script>
 	</body>
