@@ -32,7 +32,7 @@
 
 			void main() {
 				
-				vNormal = normal;
+				vNormal = positionChunk1;
 				gl_Position =  projectionMatrix *
 		    				   modelViewMatrix  *
 		     				   vec4(positionChunk1.x, positionChunk1.y, positionChunk1.z, 1.0);
@@ -85,10 +85,10 @@
 			vertSource = document.getElementById( 'vertexShader' ).textContent;
 			fragSource = document.getElementById( 'fragmentShader' ).textContent;
 
-			var cubey = new Ncube( 4, 1.0, new Vector( [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ] ), vertSource, fragSource );
+			var cubey = new Ncube( 4, 3.0, new Vector( [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ] ), vertSource, fragSource );
 			scene.add(cubey.mesh);	
 
-			camera.position.z = 8;
+		//	camera.position.z = 8;
 
 			var move_vector = new THREE.Vector3(0, 0, 0);
 
@@ -146,9 +146,10 @@
 			function render() {
 				camera.position.add(move_vector);
 				vrControls.update();
-			//	cubey.mesh.rotation.x += 0.02;
-			//	cubey.mesh.rotation.y += 0.02;
-				camera.position.z = 4;
+				cubey.mesh.rotation.x += 0.008;
+				cubey.mesh.rotation.y += 0.008;
+				cubey.mesh.rotation.z += 0.008;
+				camera.position.z = 4.5;
 				cubey.uniforms.time.value += 0.05;
 				vrEffect.render(scene, camera);
 			}
