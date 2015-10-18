@@ -9,11 +9,22 @@
 		</style>
 	</head>
 	<body>
-		<script src="js/three.min.js"></script>
+		<script src="http://threejs.org/build/three.min.js"></script>
 		<script src="http://threejs.org/examples/js/effects/VREffect.js"></script>
 		<script src="http://threejs.org/examples/js/controls/VRControls.js"></script>
 		<script src="js/makers.js"></script>
 		<script src="js/controls.js"></script>
+		
+		<script src="js/Shaders.js"></script>
+		<script src="js/Vector.js"></script>
+		<script src="js/Segment.js"></script>
+		<script src="js/Face.js"></script>
+		<script src="js/Figure.js"></script> 
+		<script src="js/Ncube.js"></script>
+		<script src="js/Slider.js"></script>
+		
+		<script src="js/TestGeom.js"></script>
+		
 		<script>
 			var scene = new THREE.Scene();
 			var camera = new THREE.PerspectiveCamera(
@@ -21,6 +32,7 @@
 
 			var renderer = new THREE.WebGLRenderer();
 			renderer.setPixelRatio(window.devicePixelRatio);
+			renderer.setClearColor( 0xffffff );
 
 			if (navigator.getVRDevices === undefined) {
 				document.body.innerHTML = "Your browser does not support WebVR";
@@ -39,8 +51,15 @@
 			scene.add(plane);
 
 			scene.add(new THREE.AxisHelper(5));
+			
+			var s = new ShaderSource();
+			vertSource = s.vertexShader();
+			fragSource = s.fragmentShader();
 
-			camera.position.z = 5;
+			var cubey = new Ncube( 3, 3.0, new Vector( [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ] ), vertSource, fragSource );
+			scene.add(cubey.mesh);	
+
+		//	camera.position.z = 8;
 
 			var move_vector = new THREE.Vector3(0, 0, 0);
 
@@ -89,12 +108,18 @@
 			function nextframe() {
 				requestAnimationFrame(nextframe);
 				//move(camera, velocity)
+			
 				render();
 			}
 
 			function render() {
 				camera.position.add(move_vector);
 				vrControls.update();
+				cubey.mesh.rotation.x += 0.008;
+				cubey.mesh.rotation.y += 0.008;
+				cubey.mesh.rotation.z += 0.008;
+				camera.position.z = 4.5;
+				cubey.uniforms.time.value += 0.05;
 				vrEffect.render(scene, camera);
 			}
 			nextframe();
