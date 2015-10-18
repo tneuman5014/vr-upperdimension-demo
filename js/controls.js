@@ -1,7 +1,7 @@
 var KEY = {W:0, A:1, S:2, D:3};
 
-function handle(key, camera) {
-	switch (key) {
+function handle(key, camera, vrEffect) {
+	/*switch (key) {
 		case 'w':
 			move(camera, {x:0, y:0.12, z:0});
 		case 'a':
@@ -10,7 +10,8 @@ function handle(key, camera) {
 			move(camera, {x:0, y:0, z:0.12});
 		case 'd':
 			move(camera, {x:0.12, y:0, z:0});
-	}
+	}*/
+	vrEffect.setFullScreen(true);
 }
 
 function move(camera, vector) {
