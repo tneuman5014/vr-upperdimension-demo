@@ -9,11 +9,52 @@
 		</style>
 	</head>
 	<body>
-		<script src="js/three.min.js"></script>
+		<script src="http://threejs.org/build/three.min.js"></script>
 		<script src="http://threejs.org/examples/js/effects/VREffect.js"></script>
 		<script src="http://threejs.org/examples/js/controls/VRControls.js"></script>
 		<script src="js/makers.js"></script>
 		<script src="js/controls.js"></script>
+		
+		<script src="js/Vector.js"></script>
+		<script src="js/Segment.js"></script>
+		<script src="js/Face.js"></script>
+		<script src="js/Figure.js"></script> 
+		<script src="js/Ncube.js"></script>
+		<script src="js/Slider.js"></script>
+		
+		<script src="js/TestGeom.js"></script>
+		
+		<script type="x-shader/x-vertex" id="vertexShader" >
+			
+			varying vec3 vNormal;			
+			attribute vec3 positionChunk1;
+			attribute vec3 positionChunk2;
+
+			void main() {
+				
+				vNormal = normal;
+				gl_Position =  projectionMatrix *
+		    				   modelViewMatrix  *
+		     				   vec4(positionChunk1.x, positionChunk1.y, positionChunk1.z, 1.0);
+			}
+		</script>
+		
+		<script  type="x-shader/x-fragment" id="fragmentShader">
+			uniform float time;
+			varying vec3 vNormal;
+			void main() {
+				vec3 lightAngle = normalize(vec3(1.0, 0.8, 0.9));
+			//	float dProd = max(0.0, dot(vNormal, lightAngle));
+				float a, b, c;
+				a = 1.0 * cos((0.000111 * gl_FragCoord.x * gl_FragCoord.x + 8.0 * vNormal.z)) * sin( 0.4 * time) * vNormal.x;
+				b = cos((0.0002 * gl_FragCoord.y * gl_FragCoord.y + 16.0 * vNormal.y)) * cos( 3.333 * time + 3.0) * vNormal.y + 0.1 * cos(time) * cos(gl_FragCoord.x);
+				c = sin((0.001 * gl_FragCoord.x * gl_FragCoord.y + 50.0 * vNormal.x)) * cos( 1.5 * sin( time )) * vNormal.z;
+				
+				gl_FragColor = vec4(a + cos(0.15 * time) * c , 1.0 * cos(0.241 * time) * b + 0.8 * sin(0.3 * time) * a, a + a * cos(0.1 * time) + c * a * b * 20.0 + 0.3 * cos(0.2 * time) * b, 1.0);
+			//	gl_FragColor = vec4(a * dProd, b * dProd, c * dProd, 1.0);
+			}
+		</script>
+		
 		<script>
 			var scene = new THREE.Scene();
 			var camera = new THREE.PerspectiveCamera(
@@ -21,6 +62,7 @@
 
 			var renderer = new THREE.WebGLRenderer();
 			renderer.setPixelRatio(window.devicePixelRatio);
+			renderer.setClearColor( 0xffffff );
 
 			if (navigator.getVRDevices === undefined) {
 				document.body.innerHTML = "Your browser does not support WebVR";
@@ -39,8 +81,14 @@
 			scene.add(plane);
 
 			scene.add(new THREE.AxisHelper(5));
+			
+			vertSource = document.getElementById( 'vertexShader' ).textContent;
+			fragSource = document.getElementById( 'fragmentShader' ).textContent;
 
-			camera.position.z = 5;
+			var cubey = new Ncube( 4, 1.0, new Vector( [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ] ), vertSource, fragSource );
+			scene.add(cubey.mesh);	
+
+			camera.position.z = 8;
 
 			var move_vector = new THREE.Vector3(0, 0, 0);
 
@@ -91,12 +139,17 @@
 			function nextframe() {
 				requestAnimationFrame(nextframe);
 				//move(camera, velocity)
+			
 				render();
 			}
 
 			function render() {
 				camera.position.add(move_vector);
 				vrControls.update();
+			//	cubey.mesh.rotation.x += 0.02;
+			//	cubey.mesh.rotation.y += 0.02;
+				camera.position.z = 4;
+				cubey.uniforms.time.value += 0.05;
 				vrEffect.render(scene, camera);
 			}
 			nextframe();

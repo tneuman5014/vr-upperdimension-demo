@@ -1,173 +1,103 @@
 <!DOCTYPE html>
 <html>
 	<head>
-    <!--Taking care of some html business-->
 		<meta charset="ISO-8859-1">
-		<title>N-Space in Yo Face</title>
-		<script type="text/javascript" src="Dimension.js"> </script>   
-		<script src="js/three.min.js"></script>
-		<!-- The library can alternatively be loaded online like this:
-		<script src="http://threejs.org/build/three.min.js"></script>  -->
-	</head>
-
-	<body>
-		<script type="text/javascript">
-
-		// A point at the origin
-		// Note: None of its axis values actually need to be set to
-		// 0.0 because if a point object is asked the value of an
-		// undefined axis it will return 0.0 anyway.
-		var p = new Point([0.0, 0.0, 0.0, 0.0]);
-		// Creates the "square object" with the given # of dimensions,
-		// scale (side length), and position p
-		var sqr = new Square( 6, 3.6, p );
-
-		// Sets up a "scene" to render in with three.js
-		var scene = new THREE.Scene();
+		<title>Dimensions</title>
+		<script src="http://threejs.org/build/three.min.js"></script>
+		<script src="js/Vector.js"></script>
+		<script src="js/Segment.js"></script>
+		<script src="js/Face.js"></script>
+		<script src="js/Figure.js"></script> 
+		<script src="js/Ncube.js"></script>
+		<script src="js/Slider.js"></script>
 		
-		// This object defines the viewport in 3D space, which is 
-		// made very simple and easy to do by three.js
-		var camera = new THREE.PerspectiveCamera(
-				45, window.innerWidth/window.innerHeight, 0.1, 1000 );
+		<script src="js/TestGeom.js"></script>
 		
-		// Sets the camera back so it is looking at the origin
-		camera.position.z = 10;
-		
-		var renderer = new THREE.WebGLRenderer( {antialias: true} );
-		renderer.setSize( window.innerWidth, window.innerHeight );
-		document.body.appendChild( renderer.domElement );
-		
-		// Background (clearning) color
-		renderer.setClearColor ( 0xffffff, 1.0 );
-
-		// A geometry and material object to describe the lines
-		// that will be drawn
-		var geo2 = new THREE.Geometry();
-		var mat2 = new THREE.LineDashedMaterial(
-				{ color: new THREE.Color( 0.0, 1.0, 0.0), linewidth: 4});
-
-		// The three.js object the lines will be rendered from
-		var lines = new THREE.Line( geo2, mat2, THREE.LinePieces);
-	
-		// Adds the "line" object into the scene
-		scene.add( lines );
-
-		// Creates a pop-up message when the page is loaded
-		// displaying information about the sqr object as
-		// defined by the figure toString method
-	//	alert(sqr);
-
-		// An empty array (list) to hold the vertices
-		// as they are passed from the figure object to the
-		// three.js "line" object
-		var projectedVertsHolder = [];
-		
-		
-		
-		///////////////////////
-		
-		var meshMat = new THREE.MeshBasicMaterial ( { color: 0xff00ff,
-			opacity: 0.12, depthWrite: false, transparent: true, side: THREE.DoubleSide });
-		var mesh = new THREE.Mesh( new THREE.Geometry(), meshMat);
-		
-		
-		projectedVertsHolder = sqr.projectTo3D( 3 );
-		// Uses the figures stored vertex associations (lines) to update the 
-		// three.js line object with the projected vertices
-
-		// Each iteration updates the 
-		// object with a new
-		for (var i = 0; i < sqr.vertices.length; i++) {
-			mesh.geometry.vertices[ i ] = 
-				projectedVertsHolder[ i ];
-
-		}
-	//	alert(sqr.faces[0].triangles[0].a);
-		
-		for (var i = 0; i < sqr.faces.length; i++) {
+		<script type="x-shader/x-vertex" id="vertexShader" >
 			
-			mesh.geometry.faces.push(sqr.faces[i].getTriangle(0));
-			mesh.geometry.faces.push(sqr.faces[i].getTriangle(1));
-			
-		}
-		
-		scene.add( mesh );
-		
-		
-		//////////////////
-		
-		
-		var t = 0;
-		var scaleFrames = 300;
-		sqr.scale(0.00003);
-		//sqr.scaleAxis(3, 0.7);
-		
-		// This function is called each time the scene is 
-		// rendered. The "running" loop one could say
-		var render = function () {
-			requestAnimationFrame( render );
-			
-			// N-space rotations are constucted from their 
-			// components in 2D. aAxis and bAxis define the plane that 
-			// the point will be rotated in.  The loops ensure
-			// the point is rotated in all possible planes
-			for (var aAxis = 0; aAxis < sqr.dimensions - 1; aAxis++) {
-				for (var bAxis = aAxis + 1; bAxis < sqr.dimensions; bAxis++) {
-		//			sqr.rotateFigure(aAxis, bAxis, p, 0.0045);
-				}
-			} 
-			
-		
-			for (var aAxis = 0; aAxis < Math.floor(t / scaleFrames) - 1; aAxis++) {
-				for (var bAxis = aAxis + 1; bAxis < Math.floor(t / scaleFrames); bAxis++) {
-					sqr.rotateFigure(aAxis, bAxis, p, 0.0045);
-				}
-			} 
-			
-			if (Math.floor(t / scaleFrames) < sqr.dimensions) {
-				sqr.scaleAxis(Math.floor(t / scaleFrames), 1.0373);
-				sqr.scale(0.9991);
-				t++;
+			varying vec3 vNormal;			
+			attribute vec3 positionChunk1;
+			attribute vec3 positionChunk2;
+
+			void main() {
+				
+				vNormal = normal;
+				gl_Position =  projectionMatrix *
+		    				   modelViewMatrix  *
+		     				   vec4(positionChunk1.x, positionChunk1.y, positionChunk1.z, 1.0);
 			}
-			
-			// Gets the new projected values of the 
-			// freshly rotated vertices
-			projectedVertsHolder = sqr.projectTo3D( 3 );
-			// Uses the figures stored vertex associations (lines) to update the 
-			// three.js line object with the projected vertices
-	
-			// Each iteration updates the three.js line
-			// object with a new pair of 
-			for (var i = 0; i < sqr.segments.length; i++) {
-				// Sets the first vertex of the line
-				lines.geometry.vertices[i * 2] = 
-					projectedVertsHolder[sqr.segments[i].getA()];
-				// Sets the second vertex
-				lines.geometry.vertices[i * 2 + 1] = 
-					projectedVertsHolder[sqr.segments[i].getB()];
-			}
-			
-			//////////////////////////
-			
-			for (var i = 0; i < sqr.vertices.length; i++) {
-				mesh.geometry.vertices[ i ] = 
-				projectedVertsHolder[ i ];
-			}
-			
-			mesh.geometry.verticesNeedUpdate = true;
-			
-			///////////////////////////////
-		
-			// Lets lines know its vertices have been updated, because 
-			// it wont check unless its been told to.
-			lines.geometry.verticesNeedUpdate = true;
-		
-			renderer.render(scene, camera);
-		};
-
-		render();
-
 		</script>
+		
+		<script  type="x-shader/x-fragment" id="fragmentShader">
+			uniform float time;
+			varying vec3 vNormal;
+			void main() {
+				vec3 lightAngle = normalize(vec3(1.0, 0.8, 0.9));
+			//	float dProd = max(0.0, dot(vNormal, lightAngle));
+				float a, b, c;
+				a = 1.0 * cos((0.000111 * gl_FragCoord.x * gl_FragCoord.x + 8.0 * vNormal.z)) * sin( 0.4 * time) * vNormal.x;
+				b = cos((0.0002 * gl_FragCoord.y * gl_FragCoord.y + 16.0 * vNormal.y)) * cos( 3.333 * time + 3.0) * vNormal.y + 0.1 * cos(time) * cos(gl_FragCoord.x);
+				c = sin((0.001 * gl_FragCoord.x * gl_FragCoord.y + 50.0 * vNormal.x)) * cos( 1.5 * sin( time )) * vNormal.z;
+				
+				gl_FragColor = vec4(a + cos(0.15 * time) * c , 1.0 * cos(0.241 * time) * b + 0.8 * sin(0.3 * time) * a, a + a * cos(0.1 * time) + c * a * b * 20.0 + 0.3 * cos(0.2 * time) * b, 1.0);
+			//	gl_FragColor = vec4(a * dProd, b * dProd, c * dProd, 1.0);
+			}
+		</script>
+		
+	</head>
+	<body>
+
+
+		<script type="text/javascript">
+			
+			var origin = new Vector( [ 0.0, 0.0, 0.0] );
+
+			var testScene, cam, rendy, cube, vertSource, fragSource;
+
+			initialize();
+			renderMe();
+			
+			
+			function initialize() {
+					
+				testScene = new THREE.Scene();
+
+				cam = new THREE.PerspectiveCamera ( 30, 
+						window.innerWidth / window.innerHeight, 1, 100 );
+				cam.position.z = 9;
+				
+			//    test = new TestGeom( );
+				vertSource = document.getElementById( 'vertexShader' ).textContent;
+				fragSource = document.getElementById( 'fragmentShader' ).textContent;
+
+				cube = new Ncube( 6, 1.0, new Vector( [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ] ), vertSource, fragSource );
+				
+				rendy = new THREE.WebGLRenderer( { antialias: true });
+				rendy.setClearColor( 0xffffff );
+				rendy.setPixelRatio( window.devicePixelRatio );
+				rendy.setSize( window.innerWidth, window.innerHeight );
+				document.body.appendChild( rendy.domElement );
+										
+			
+			//	var geo = new THREE.TorusKnotGeometry( 0.5, 0.1, 100, 30 );
+			//	var mat = new THREE.MeshBasicMaterial( { color: 0x00fff0 } );
+			//	knot = new THREE.Mesh( geo, mat );
+			
+			//	testScene.add( test.testMesh );
+				testScene.add( cube.mesh );
+				
+			}
+			
+			function renderMe() {
+				requestAnimationFrame( renderMe );
+				cube.mesh.rotation.x += 0.02;
+				cube.mesh.rotation.y += 0.02;
+				cube.uniforms.time.value += 0.05;
+				rendy.render( testScene, cam );
+			}
+			
+		</script>
+
 
 	</body>
 </html>
