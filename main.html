@@ -52,40 +52,38 @@
 				var key = event.key;
 				switch (key) {
 				case 'w':
-					move_vector.add(new THREE.Vector3(0, 0, -0.2));
+					move_vector.z = -0.2;
 					break;
 				case 'a':
-					move_vector.add(new THREE.Vector3(-0.2, 0, 0));
+					move_vector.x = -0.2;
 					break;
 				case 's':
-					move_vector.add(new THREE.Vector3(0, 0, 0.2));
+					move_vector.z = 0.2;
 					break;
 				case 'd':
-					move_vector.add(new THREE.Vector3(0.2, 0, 0));
+					move_vector.x = 0.2;
 					break;
 				}
-				move_vector.normalize();
-				move_vector.multiplyScalar(0.2);
+				move_vector.setLength(0.2);
 			}
 
 			document.onkeyup = function(event) {
 				var key = event.key;
 				switch (key) {
 				case 'w':
-					move_vector.sub(new THREE.Vector3(0, 0, -0.2));
+					move_vector.z = 0;
 					break;
 				case 'a':
-					move_vector.sub(new THREE.Vector3(-0.2, 0, 0));
+					move_vector.x = 0;
 					break;
 				case 's':
-					move_vector.sub(new THREE.Vector3(0, 0, 0.2));
+					move_vector.z = 0;
 					break;
 				case 'd':
-					move_vector.sub(new THREE.Vector3(0.2, 0, 0));
+					move_vector.x = 0;
 					break;
 				}
-				move_vector.normalize();
-				move_vector.multiplyScalar(0.2);
+				move_vector.setLength(0.2);
 			}
 
 			function nextframe() {
