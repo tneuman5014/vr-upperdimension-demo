@@ -65,7 +65,7 @@ function Figure () {
 	//	this.geometry.addAttribute( 'color', new THREE.BufferAttribute( vertices, 3 ) );
 		this.geometry.addAttribute( 'position', new THREE.BufferAttribute( new Float32Array( vertAxisChunks[ 0 ] ), 3 ) );
 		this.geometry.addAttribute( 'index', new THREE.BufferAttribute( new Uint16Array( faceIndices ), 3 ) );
-		this.geometry.addAttribute( 'normal', new THREE.BufferAttribute( new Float32Array( vertAxisChunks[ 0 ] ), 3) );
+	//	this.geometry.addAttribute( 'normal', new THREE.BufferAttribute( new Float32Array( vertAxisChunks[ 0 ] ), 3) );
 		this.geometry.addAttribute( 'positionChunk1', new THREE.BufferAttribute( new Float32Array( vertAxisChunks[ 0 ] ), 3 ) );
 		this.geometry.addAttribute( 'positionChunk2', new THREE.BufferAttribute( new Float32Array( vertAxisChunks[ 1 ] ), 3 ) );
 	//	this.geometry.addAttribute( 'positionChunk3', new THREE.BufferAttribute( new Float32Array( vertAxisChunks[ 2 ] ), 3 ) );
