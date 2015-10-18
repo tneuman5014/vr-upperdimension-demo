@@ -56,13 +56,17 @@
 				handle(event.key, camera);
 			}
 
-			function render() {
-				requestAnimationFrame(render);
+			function nextframe() {
+				requestAnimationFrame(nextframe);
 				//move(camera, velocity)
+				render();
+			}
+
+			function render() {
 				vrControls.update();
 				vrEffect.render(scene, camera);
 			}
-			render();
+			nextframe();
 
 			function slow(target, amount) {
 				target = new THREE.Vector3().subVectors(target, amount);
