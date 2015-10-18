@@ -26,6 +26,7 @@
 		<script src="js/TestGeom.js"></script>
 		
 		<script>
+			var SCALE = 1.0;
 			var scene = new THREE.Scene();
 			var camera = new THREE.PerspectiveCamera(
 				75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -48,22 +49,35 @@
 			var ground = generateBox(-1, 0, -1, 0.2);
 			scene.add(cube);
 			var plane = new THREE.Mesh(new THREE.PlaneGeometry(4, 4), new THREE.MeshBasicMaterial({color:0xffff00}));
+			
 			scene.add(plane);
 
 			scene.add(new THREE.AxisHelper(5));
+
+			scene.add(new THREE.AxisHelper(1.25 * SCALE));
+
 			
 			var s = new ShaderSource();
 			vertSource = s.vertexShader();
 			fragSource = s.fragmentShader();
 
 			var cubey = new Ncube( 3, 3.0, new Vector( [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ] ), vertSource, fragSource );
+
+			var cubey = new Ncube( 3, SCALE,
+				new Vector( [ 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 ] ), vertSource, fragSource );
+
 			scene.add(cubey.mesh);	
 
 		//	camera.position.z = 8;
 
+			camera.position.z = 30;
+
+
 			var move_vector = new THREE.Vector3(0, 0, 0);
 
 			document.onkeypress = function(event) {
+
+
 				handle(event.key, vrEffect);
 			}
 
@@ -71,40 +85,63 @@
 				var key = event.key;
 				switch (key) {
 				case 'w':
-					move_vector.add(new THREE.Vector3(0, 0, -0.2));
+					move_vector.z = -0.2;
 					break;
 				case 'a':
-					move_vector.add(new THREE.Vector3(-0.2, 0, 0));
+					move_vector.x = -0.2;
 					break;
 				case 's':
-					move_vector.add(new THREE.Vector3(0, 0, 0.2));
+					move_vector.z = 0.2;
 					break;
 				case 'd':
-					move_vector.add(new THREE.Vector3(0.2, 0, 0));
+					move_vector.x = 0.2;
+					break;
+				case 'ArrowDown':
+					move_vector.y = -0.2;
+					break;
+				case 'ArrowUp':
+					move_vector.y = 0.2;
 					break;
 				}
-				move_vector.normalize();
-				move_vector.multiplyScalar(0.2);
+				
+				move_vector.setLength(0.2);
 			}
 
 			document.onkeyup = function(event) {
 				var key = event.key;
 				switch (key) {
 				case 'w':
-					move_vector.sub(new THREE.Vector3(0, 0, -0.2));
+					move_vector.z = 0;
 					break;
 				case 'a':
-					move_vector.sub(new THREE.Vector3(-0.2, 0, 0));
+					move_vector.x = 0;
 					break;
 				case 's':
-					move_vector.sub(new THREE.Vector3(0, 0, 0.2));
+					move_vector.z = 0;
 					break;
 				case 'd':
-					move_vector.sub(new THREE.Vector3(0.2, 0, 0));
+					move_vector.x = 0;
+					break;
+				case 'ArrowDown':
+				window.alert("what");
+					move_vector.y = 0;
+					break;
+				case 'ArrowUp':
+					move_vector.y = 0;
 					break;
 				}
-				move_vector.normalize();
-				move_vector.multiplyScalar(0.2);
+				move_vector.setLength(0.2);
+
+				press(event.key, vrEffect);
+			}
+
+			document.onkeydown = function(event) {
+				down(event.key, move_vector);
+			}
+
+			document.onkeyup = function(event) {
+				up(event.key, move_vector);
+
 			}
 
 			function nextframe() {
@@ -115,16 +152,28 @@
 			}
 
 			function render() {
+				move_vector.setLength(SCALE / 6.0);
 				camera.position.add(move_vector);
 				vrControls.update();
 				cubey.mesh.rotation.x += 0.008;
 				cubey.mesh.rotation.y += 0.008;
 				cubey.mesh.rotation.z += 0.008;
-				camera.position.z = 4.5;
+
+
+				//camera.position.z = 4.5;
+
+
 				cubey.uniforms.time.value += 0.05;
 				vrEffect.render(scene, camera);
 			}
 			nextframe();
+
+
+
+
+
+
+
 
 		</script>
 	</body>
