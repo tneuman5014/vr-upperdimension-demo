@@ -59,6 +59,7 @@
 			function render() {
 				requestAnimationFrame(render);
 				//move(camera, velocity)
+				vrControls.update();
 				vrEffect.render(scene, camera);
 			}
 			render();
