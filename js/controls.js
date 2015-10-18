@@ -12,6 +12,8 @@ function handle(key, camera, vrEffect) {
 			move(camera, {x:0.12, y:0, z:0});
 	}*/
 	vrEffect.setFullScreen(true);
+	console.log("Enter full screen");
+	vrEffect.setSize(window.innerWidth, window.innerHeight);
 }
 
 function move(camera, vector) {
