@@ -52,7 +52,7 @@
 			var velocity = new THREE.Vector3().copy(START_VEL);
 
 			document.onkeypress = function(event) {
-				handle(event.key, camera);
+				handle(event.key, camera, vrEffect);
 			}
 
 			function nextframe() {
